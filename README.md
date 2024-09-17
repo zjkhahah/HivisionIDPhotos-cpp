@@ -22,6 +22,11 @@
 
 ## 运行
 
+
+
+[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)是编译过后的windows版和aarch64版可把执行文件和依赖放入HivisionIDPhotos_cpp根目录下直接执行
+
+
 ### 	**1. 克隆项目**
 
 ```
@@ -117,8 +122,6 @@ make -j8
 
 
 
-
-[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)是编译过后的windows版和aarch64版可把执行文件和依赖放入HivisionIDPhotos_cpp根目录下直接执行
 
 
 
