@@ -29,7 +29,27 @@ https://github.com/zjkhahah/HivisionIDPhotos_cpp.git
 cd  HivisionIDPhotos_cpp
 ```
 
-### 	**2.编译**
+
+
+### **2.下载权重文件**
+
+存到项目的`model`目录下
+
+modnet_photographic_portrait_matting.mnn 
+
+hivision_modnet.mnn
+
+symbol_10_320_20L_5scales_v2_deploy.mnn
+
+symbol_10_320_20L_8scales_v2_deploy.mnn
+
+
+
+
+
+
+
+### 	**3.编译**
 
 ​		**其中MNN版本为2.9.0**
 
