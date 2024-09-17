@@ -39,9 +39,9 @@ modnet_photographic_portrait_matting.mnn [下载](https://github.com/zjkhahah/Hi
 
 hivision_modnet.mnn [下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/mnn_hivision_modnet.mnn)
 
-symbol_10_320_20L_5scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0symbol_10_320_20L_5scales_v2_deploy.mnn)
+symbol_10_320_20L_5scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/symbol_10_320_20L_5scales_v2_deploy.mnn)
 
-symbol_10_320_20L_8scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0symbol_10_320_20L_8scales_v2_deploy.mnn)
+symbol_10_320_20L_8scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/symbol_10_320_20L_8scales_v2_deploy.mnn)
 
 
 
