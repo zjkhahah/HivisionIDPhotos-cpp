@@ -92,7 +92,7 @@ make -j8
 
 ​	以windows为例 powershell打开
 
-![image-20240917134011147](C:\Users\zhou\AppData\Roaming\Typora\typora-user-images\image-20240917134011147.png)
+![image-20240917134011147](./images/1.png)
 
 
 
