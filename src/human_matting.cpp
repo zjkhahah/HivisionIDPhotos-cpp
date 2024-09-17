@@ -97,14 +97,14 @@ cv::Mat  Interference(const char* & mnn_path, cv::Mat input_BgrImg,int num_threa
     auto input = net->getSessionInput(session, nullptr);
     int size_w = 512;  // 初始化宽度
     int size_h = 512;  // 初试化高度
+    int bpp =3;
     auto shape = input->shape();
-    if (shape[0] != 1) {
-        shape[0] = 1;
-        net->resizeTensor(input, shape);
-        net->resizeSession(session);
-    }
-    {
-        int bpp = 0;
+    if(shape[2]!=-1||shape[3]!=-1){
+        if (shape[0] != 1) {
+            shape[0] = 1;
+            net->resizeTensor(input, shape);
+            net->resizeSession(session);
+        }
         bpp = shape[1];
         size_h = shape[2];
         size_w = shape[3];
@@ -114,9 +114,14 @@ cv::Mat  Interference(const char* & mnn_path, cv::Mat input_BgrImg,int num_threa
             size_h = 1;
         if (size_w == 0)
             size_w = 1;
-        MNN_PRINT("input: w:%d , h:%d, bpp: %d\n", size_w, size_h, bpp);
     }
-
+    else{
+        std::vector<int> shape = {1, bpp, size_h, size_w};  // 假设框架使用 NHWC 格式
+        net->resizeTensor(input, shape);
+        net->resizeSession(session);
+    }
+    MNN_PRINT("input: w:%d , h:%d, bpp: %d\n", size_w, size_h, bpp);
+   
     cv::Mat pre_img = seg_preprocess( matBgrImg,size_w, size_h);
     std::vector<std::vector<cv::Mat>> nChannels;
     std::vector<cv::Mat> rgbChannels(3);

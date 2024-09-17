@@ -10,7 +10,8 @@ int main(int argc, char* argv[]) {
 	cmdline::parser p;
 	p.add<std::string>("input_image", 'i', "Enter image path", false, "./demo/images/test2.jpg");
 	p.add<std::string>("output_image", 'o', "Enter image path", false, ".");
-	p.add<int>("out_size_kb", 'k', "image size", false, 20);
+	p.add<std::string>("segment_model", 's', "segment model name", false, "mnn_hivision_modnet.mnn");
+	p.add<int>("out_size_kb", 'k', "image size", false, 0);
 	p.add<int>("thread_num", 't', "model use thread num", false, 4);
 	p.add<int>("background_color_r", 'r', "background red", false, 255);
 	p.add<int>("background_color_g", 'g', "background green", false, 0);
@@ -19,7 +20,7 @@ int main(int argc, char* argv[]) {
 	p.add<int>("out_images_height", 'h', "out images height", false, 413);
 	p.add<int>("face_model", 'f', "face_model type 5 and 8", false, 8);
 	std::string face_model_path = "./model";
-	const char* segment_modnet = "./model/mnn_hivision_modnet.mnn";
+	//const char* segment_modnet = "./model/mnn_hivision_modnet.mnn";
 	p.parse_check(argc, argv);
 
 	params.out_image_width=p.get<int>("out_images_width");
@@ -27,12 +28,15 @@ int main(int argc, char* argv[]) {
 	params.rgb_b=p.get<int>("background_color_b");
 	params.rgb_g=p.get<int>("background_color_g");
 	params.rgb_r=p.get<int>("background_color_r");
-	
+
+	std::string modelFilename = p.get<std::string>("segment_model");
+	std::string modelPath = "./model/" + modelFilename;
+	const char* modelPathCStr = modelPath.c_str();
 	cv::Vec3b newBackgroundColor(p.get<int>("background_color_b"), p.get<int>("background_color_g"), p.get<int>("background_color_r"));
 	LFFD* face_detector = new LFFD(face_model_path, p.get<int>("face_model"), p.get<int>("thread_num"));
 
 	cv::Mat image = cv::imread(p.get<std::string>("input_image"), cv::IMREAD_COLOR);
-	cv::Mat bgra_img=	Interference(segment_modnet, image,4);
+	cv::Mat bgra_img=	Interference(modelPathCStr, image,4);
 
 	cv::Mat add_background_img = addBackground(bgra_img, newBackgroundColor);
 	cv::cvtColor(add_background_img, add_background_img, cv::COLOR_BGRA2BGR);
@@ -53,7 +57,9 @@ int main(int argc, char* argv[]) {
 	}
 	free(face_detector);
 	cv::Mat hd_result= photo_adjust(params, add_background_img);
-	resizeImageToKB(hd_result, p.get < std::string>("output_image")+"result_kb.png",p.get <int>("out_size_kb") );
+	if(p.get<int>("out_size_kb")>0){
+		resizeImageToKB(hd_result, p.get < std::string>("output_image")+"result_kb.png",p.get <int>("out_size_kb") );
+	}
 	cv::Mat standard_result;
 	cv::Size standard_size(params.out_image_width, params.out_image_height);
 	cv::resize(hd_result, standard_result, standard_size);
