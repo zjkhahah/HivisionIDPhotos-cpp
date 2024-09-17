@@ -72,7 +72,7 @@ cd  HivisionIDPhotos_cpp
 
 
 
-### **2.下载权重文件**
+### 2.下载权重文件
 
 存到项目的`model`目录下
 
@@ -90,7 +90,7 @@ symbol_10_320_20L_8scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/Hivi
 
 
 
-### 	**3.编译**
+### 	3.编译
 
 ​		**其中MNN版本为2.9.0**
 
@@ -149,7 +149,7 @@ make -j8
 
 
 
-​	**3.使用**
+​	### 4.使用
 
 ​	以windows为例 powershell打开
 
