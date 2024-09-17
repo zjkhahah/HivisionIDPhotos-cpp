@@ -12,15 +12,12 @@
 
 - [项目简介](#项目简介)
 - [免编译直接运行](#运行)
-- [下载权重文件](#2.下载权重文件)
+- [下载权重文件](#下载权重文件)
 - [编译源码](#源码编译)
 - [如何使用](#️使用)
 - [引用项目](#引用项目)
-- [联系我们](#-联系我们)
-- [Q&A](#qa)
-- [贡献者](#贡献者)
-- [感谢支持](#感谢支持)
-- [License](#lincese)
+- [联系我们](#联系我们)
+
 
 <br>
 
@@ -62,20 +59,7 @@
 
 [release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)是编译过后的windows版和aarch64版可把执行文件和依赖放入HivisionIDPhotos_cpp根目录下权重文件放到model文件夹下直接执行 
 
-
-
-
-## 源码编译
-### 	**1. 克隆项目**
-
-```
-https://github.com/zjkhahah/HivisionIDPhotos_cpp.git
-cd  HivisionIDPhotos_cpp
-```
-
-
-
-### 2.下载权重文件
+##  下载权重文件
 
 存到项目的`model`目录下
 
@@ -89,11 +73,23 @@ symbol_10_320_20L_8scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/Hivi
 
 
 
+## 源码编译
+### 	**1. 克隆项目**
+
+```
+https://github.com/zjkhahah/HivisionIDPhotos_cpp.git
+cd  HivisionIDPhotos_cpp
+```
 
 
 
 
-### 	3.编译平台
+
+
+
+
+
+### 	2.编译平台
 
 ​		**其中MNN版本为2.9.0**
 
