@@ -2,6 +2,37 @@
 
 
 
+
+
+
+<br>
+
+# 目录
+
+
+- [项目简介](## 项目简介)
+- [运行](## 运行)
+- [Demo启动](#-运行-gradio-demo)
+- [Python推理](#-python-推理)
+- [API服务部署](#️-部署-api-服务)
+- [Docker部署](#-docker-部署)
+- [联系我们](#-联系我们)
+- [Q&A](#qa)
+- [贡献者](#贡献者)
+- [感谢支持](#感谢支持)
+- [License](#lincese)
+
+<br>
+
+
+
+
+
+
+
+
+
+
 ## 项目简介
 
 ​	**HivisionIDPhoto 旨在开发一种实用、系统性的证件照智能制作算法。HivisionIDPhoto_cpp是对HivisionIDPhoto C++的重构，目的利用边缘设备的计算资源，以实现嵌入式设备和手机端本地部署。**
@@ -19,6 +50,11 @@
 ​	**5.美颜（waitting）**
 
 ​	**6.安卓apk（waitting）**
+
+
+
+
+
 
 ## 运行
 
