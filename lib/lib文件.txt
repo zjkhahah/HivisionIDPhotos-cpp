@@ -1,0 +1,3 @@
+MNN.lib
+
+opencv_470.lib
