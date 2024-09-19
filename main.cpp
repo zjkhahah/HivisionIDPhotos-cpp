@@ -12,6 +12,7 @@ int main(int argc, char* argv[]) {
 	p.add<std::string>("output_image", 'o', "Enter image path", false, ".");
 	p.add<std::string>("segment_model", 's', "segment model name", false, "mnn_hivision_modnet.mnn");
 	p.add<int>("out_size_kb", 'k', "image size", false, 0);
+	p.add<bool>("layout_photos", 'l', "layout_photo ", false, 0);
 	p.add<int>("thread_num", 't', "model use thread num", false, 4);
 	p.add<int>("background_color_r", 'r', "background red", false, 255);
 	p.add<int>("background_color_g", 'g', "background green", false, 0);
@@ -63,6 +64,17 @@ int main(int argc, char* argv[]) {
 	cv::Mat standard_result;
 	cv::Size standard_size(params.out_image_width, params.out_image_height);
 	cv::resize(hd_result, standard_result, standard_size);
+	 if(p.get<bool>("layout_photos")){
+		auto result_typography_arr =generate_layout_photo(params.out_image_height, params.out_image_width);
+		cv::Mat result_layout_image = generate_layout_image(
+		standard_result,
+		std::get<0>(result_typography_arr),
+		std::get<1>(result_typography_arr),
+		params.out_image_width,
+		params.out_image_height
+		);
+		cv::imwrite(p.get < std::string>("output_image") +"layout_photo.png", result_layout_image);
+	 }
 	cv::imwrite(p.get < std::string>("output_image") +"result_hd.png", hd_result);
 	cv::imwrite(p.get < std::string>("output_image")+"result_standard.png", standard_result);
 

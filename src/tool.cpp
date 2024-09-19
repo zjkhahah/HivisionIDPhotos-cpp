@@ -44,7 +44,169 @@ bool resizeImageToKB(const cv::Mat& inputImage, const std::string& outputImagePa
 }
 
 
+std::tuple<std::tuple<int, int, int>, int, int> judge_layout(
+    int input_width,
+    int input_height,
+    int PHOTO_INTERVAL_W,
+    int PHOTO_INTERVAL_H,
+    int LIMIT_BLOCK_W,
+    int LIMIT_BLOCK_H
+) {
+    int centerBlockHeight_1 = input_height; // 不转置排列的中心区块高度
+    int centerBlockWidth_1 = input_width;   // 不转置排列的中心区块宽度
+    int centerBlockHeight_2 = input_width;  // 转置排列的中心区块高度
+    int centerBlockWidth_2 = input_height;  // 转置排列的中心区块宽度
 
+    // 1. 不转置排列的情况下：
+    int layout_col_no_transpose = 0;  // 列
+    int layout_row_no_transpose = 0;  // 行
+    for (int i = 1; i < 4; ++i) {
+        int centerBlockHeight_temp = input_height * i + PHOTO_INTERVAL_H * (i - 1);
+        if (centerBlockHeight_temp < LIMIT_BLOCK_H) {
+            centerBlockHeight_1 = centerBlockHeight_temp;
+            layout_row_no_transpose = i;
+        }
+        else {
+            break;
+        }
+    }
+    for (int j = 1; j < 9; ++j) {
+        int centerBlockWidth_temp = input_width * j + PHOTO_INTERVAL_W * (j - 1);
+        if (centerBlockWidth_temp < LIMIT_BLOCK_W) {
+            centerBlockWidth_1 = centerBlockWidth_temp;
+            layout_col_no_transpose = j;
+        }
+        else {
+            break;
+        }
+    }
+    int layout_number_no_transpose = layout_row_no_transpose * layout_col_no_transpose;
+
+    // 2. 转置排列的情况下：
+    int layout_col_transpose = 0;  // 列
+    int layout_row_transpose = 0;  // 行
+    for (int i = 1; i < 4; ++i) {
+        int centerBlockHeight_temp = input_width * i + PHOTO_INTERVAL_H * (i - 1);
+        if (centerBlockHeight_temp < LIMIT_BLOCK_H) {
+            centerBlockHeight_2 = centerBlockHeight_temp;
+            layout_row_transpose = i;
+        }
+        else {
+            break;
+        }
+    }
+    for (int j = 1; j < 9; ++j) {
+        int centerBlockWidth_temp = input_height * j + PHOTO_INTERVAL_W * (j - 1);
+        if (centerBlockWidth_temp < LIMIT_BLOCK_W) {
+            centerBlockWidth_2 = centerBlockWidth_temp;
+            layout_col_transpose = j;
+        }
+        else {
+            break;
+        }
+    }
+    int layout_number_transpose = layout_row_transpose * layout_col_transpose;
+
+    // 返回结果
+    if (layout_number_transpose > layout_number_no_transpose) {
+        return std::make_tuple(std::make_tuple(layout_col_transpose, layout_row_transpose, 2), centerBlockWidth_2, centerBlockHeight_2);
+    }
+    else {
+        return std::make_tuple(std::make_tuple(layout_col_no_transpose, layout_row_no_transpose, 1), centerBlockWidth_1, centerBlockHeight_1);
+    }
+}
+
+
+
+
+std::pair<std::vector<std::vector<int>>, bool> generate_layout_photo(int input_height, int input_width) {
+    // 基础参数
+    const int LAYOUT_WIDTH = 1746;
+    const int LAYOUT_HEIGHT = 1180;
+    const int PHOTO_INTERVAL_H = 30;
+    const int PHOTO_INTERVAL_W = 30;
+    const int SIDES_INTERVAL_H = 50;
+    const int SIDES_INTERVAL_W = 70;
+    const int LIMIT_BLOCK_W = LAYOUT_WIDTH - 2 * SIDES_INTERVAL_W;
+    const int LIMIT_BLOCK_H = LAYOUT_HEIGHT - 2 * SIDES_INTERVAL_H;
+
+    // 创建一个 1180x1746 的空白画布
+    cv::Mat white_background(cv::Size(LAYOUT_WIDTH, LAYOUT_HEIGHT), CV_8UC3, cv::Scalar(255, 255, 255));
+
+    // 计算照片的 layout
+    auto  result = judge_layout(input_width, input_height, PHOTO_INTERVAL_W, PHOTO_INTERVAL_H, LIMIT_BLOCK_W, LIMIT_BLOCK_H);
+    auto layout_mode = std::get<0>(result);
+    int centerBlockWidth = std::get<1>(result);
+    int centerBlockHeight = std::get<2>(result);
+    // 开始排列组合
+    int x11 = (LAYOUT_WIDTH - centerBlockWidth) / 2;
+    int y11 = (LAYOUT_HEIGHT - centerBlockHeight) / 2;
+    std::vector<std::vector<int>> typography_arr;
+    bool typography_rotate = (std::get<2>(layout_mode) == 2);
+
+    // 根据是否转置调整输入宽度和高度
+    int effective_width = typography_rotate ? input_height : input_width;
+    int effective_height = typography_rotate ? input_width : input_height;
+
+    for (int j = 0; j < std::get<1>(layout_mode); ++j) {
+        for (int i = 0; i < std::get<0>(layout_mode); ++i) {
+            int xi = x11 + i * effective_width + i * PHOTO_INTERVAL_W;
+            int yi = y11 + j * effective_height + j * PHOTO_INTERVAL_H;
+            typography_arr.push_back({ xi, yi });
+        }
+    }
+
+    return { typography_arr, typography_rotate };
+}
+
+
+
+
+cv::Mat generate_layout_image(
+    const cv::Mat& input_image,
+    const std::vector<std::vector<int>>& typography_arr,
+    bool typography_rotate,
+    int width ,
+    int height
+) {
+    // 定义布局的宽度和高度
+    const int LAYOUT_WIDTH = 1746;
+    const int LAYOUT_HEIGHT = 1180;
+    cv::Mat resize_input_image;
+    // 创建一个空白背景图像
+    cv::Mat white_background(cv::Size(LAYOUT_WIDTH, LAYOUT_HEIGHT), CV_8UC3, cv::Scalar(255, 255, 255));
+    // 检查输入图像的高度是否与预期的高度不同，如果是，则调整大小
+    if (input_image.rows != height) {
+  
+        cv::resize(input_image, resize_input_image, cv::Size(width, height));
+    }
+    else {
+        resize_input_image = input_image.clone();
+        cv::cvtColor(resize_input_image, resize_input_image, cv::COLOR_BGRA2BGR);
+    }
+     //如果需要旋转图像，则进行旋转
+    if (typography_rotate) {
+        cv::transpose(resize_input_image, resize_input_image);
+        std::swap(width, height); // 交换宽度和高度
+    }
+
+    // 遍历所有的排版坐标
+    for (const auto& arr : typography_arr) {
+        int locate_x = arr[0];
+        int locate_y = arr[1];
+
+        // 将输入图像复制到背景图像的指定位置
+        cv::Rect roi(locate_x, locate_y, width, height);
+        try {
+            resize_input_image.copyTo(white_background(roi));
+        }
+        catch (const cv::Exception& ex) {
+            std::cerr << "OpenCV error: " << ex.what() << std::endl;
+        }
+    }
+
+    return white_background;
+}
 
 
 cv::Mat addBackground(const cv::Mat& input_image, const cv::Vec3b& bgr, const std::string& mode ) {
