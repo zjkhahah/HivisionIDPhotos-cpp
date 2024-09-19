@@ -2,6 +2,33 @@
 
 
 
+
+
+<br>
+
+# 目录
+
+
+- [项目简介](#项目简介)
+- [免编译直接运行](#运行)
+- [下载权重文件](#下载权重文件)
+- [编译源码](#源码编译)
+- [如何使用](#使用)
+- [引用项目](#引用项目)
+- [联系我们](#联系我们)
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
 ## 项目简介
 
 ​	**HivisionIDPhoto 旨在开发一种实用、系统性的证件照智能制作算法。HivisionIDPhoto_cpp是对HivisionIDPhoto C++的重构，目的利用边缘设备的计算资源，以实现嵌入式设备和手机端本地部署。**
@@ -20,8 +47,32 @@
 
 ​	**6.安卓apk（waitting）**
 
+
+
+
+
+
 ## 运行
 
+
+
+[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)是编译过后的windows版和aarch64版可把执行文件和依赖放入HivisionIDPhotos_cpp根目录下权重文件放到model文件夹下直接执行 
+
+##  下载权重文件
+
+存到项目的`model`目录下
+
+modnet_photographic_portrait_matting.mnn [下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/modnet_photographic_portrait_matting.mnn)
+
+hivision_modnet.mnn [下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/mnn_hivision_modnet.mnn)
+
+symbol_10_320_20L_5scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/symbol_10_320_20L_5scales_v2_deploy.mnn)
+
+symbol_10_320_20L_8scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/symbol_10_320_20L_8scales_v2_deploy.mnn)
+
+
+
+## 源码编译
 ### 	**1. 克隆项目**
 
 ```
@@ -31,25 +82,13 @@ cd  HivisionIDPhotos_cpp
 
 
 
-### **2.下载权重文件**
-
-存到项目的`model`目录下
-
-modnet_photographic_portrait_matting.mnn 
-
-hivision_modnet.mnn
-
-symbol_10_320_20L_5scales_v2_deploy.mnn
-
-symbol_10_320_20L_8scales_v2_deploy.mnn
 
 
 
 
 
 
-
-### 	**3.编译**
+### 	2.编译平台
 
 ​		**其中MNN版本为2.9.0**
 
@@ -108,7 +147,8 @@ make -j8
 
 
 
-​	**3.使用**
+
+## 使用
 
 ​	以windows为例 powershell打开
 
@@ -117,8 +157,6 @@ make -j8
 
 
 
-
-[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)是编译过后的windows版和aarch64版可把执行文件和依赖放入HivisionIDPhotos_cpp根目录下直接执行
 
 
 
