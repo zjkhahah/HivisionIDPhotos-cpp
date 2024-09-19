@@ -1,36 +1,24 @@
-# 						HivisionIDPhoto-cpp
+<div align="center">
+<h1>HivisionlDPhoto-cpp</h1> 
 
+ </div>
 
-
-
-
-
-<br>
 
 # 目录
 
 
 - [项目简介](#项目简介)
-- [免编译直接运行](#运行)
-- [下载权重文件](#下载权重文件)
+- [准备工作](#准备工作)
+- [权重文件下载](#权重文件下载)
 - [编译源码](#源码编译)
 - [如何使用](#使用)
 - [引用项目](#引用项目)
 - [联系我们](#联系我们)
 
 
-<br>
 
 
-
-
-
-
-
-
-
-
-## 项目简介
+# 项目简介
 
 ​	**HivisionIDPhoto 旨在开发一种实用、系统性的证件照智能制作算法。HivisionIDPhoto_cpp是对HivisionIDPhoto C++的重构，目的利用边缘设备的计算资源，以实现嵌入式设备和手机端本地部署。**
 
@@ -50,16 +38,14 @@
 
 
 
+# 准备工作
+
+
+windows版和aarch64版程序压缩放在[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)中，解压后需将执行文件和依赖环境放入HivisionIDPhotos_cpp根目录下，权重文件放到model文件夹下。
 
 
 
-## 运行
-
-
-
-[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)是编译过后的windows版和aarch64版可把执行文件和依赖放入HivisionIDPhotos_cpp根目录下权重文件放到model文件夹下直接执行 
-
-##  下载权重文件
+# 权重文件下载
 
 存到项目的`model`目录下
 
@@ -73,8 +59,8 @@ symbol_10_320_20L_8scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/Hivi
 
 
 
-## 源码编译
-### 	**1. 克隆项目**
+# 源码编译
+## 	**1. 克隆项目**
 
 ```
 https://github.com/zjkhahah/HivisionIDPhotos_cpp.git
@@ -83,19 +69,13 @@ cd  HivisionIDPhotos_cpp
 
 
 
-
-
-
-
-
-
-### 	2.编译平台
+## 	2.编译平台
 
 ​		**其中MNN版本为2.9.0**
 
 ​		**opencv版本为4.7.0**
 
-#### 	**1.windows**
+### 	**1.windows**
 
 - 环境要求
 
@@ -148,20 +128,34 @@ make -j8
 
 
 
+# 使用
 
-## 使用
+核心指令：
+* `-i`：输入照片路径
+* `-o`：输出照片路径
+* `-k`：输出照片大小
+* `-f`：人脸模型选择
+* ...
 
-​	以windows为例 powershell打开
+​更多指令通过`	./HivisionIDPhotos_cpp.exe --help`查看
 
-![image-20240917134011147](./images/1.png)
-
-
-
-
+##  1.打开程序
+以windows系统为例，使用工具powershell跳转到根目录下,例：
+` cd D:\HivisionIDPhotos-cpp`
 
 
+## 2.证件照制作
+输入一张照片，输出一张标准证件照png
+`./HivisionIDPhotos_cpp.exe -i demo/images/test.jpg  -o 1  -r 255  -g 0  -b 0 -h 413 -w 295 `
 
-## 引用项目
+## 3.人像抠图
+输入 1 张照片，获得 1张 4 通道透明 png
+
+## 4.生成一张六寸排版照
+输入一张照片，得到一张六寸排版照 png
+`./HivisionIDPhotos_cpp.exe -i demo/images/test.jpg  -o 1  -r 255  -g 0  -b 0 -h 413 -w 295 -l 1`
+
+# 引用项目
 
 1. [MNN](https://github.com/alibaba/MNN):
 
@@ -203,7 +197,6 @@ make -j8
 
 
 
-##  联系我们
+#  联系我们
 
-如果您有任何问题，请提issue
-
+如果您有任何问题，请提[issue](https://github.com/zjkhahah/HivisionIDPhotos-cpp/issues)或发邮件至24021211792@stu.xidian.edu.cn
