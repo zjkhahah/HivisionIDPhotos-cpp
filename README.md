@@ -1,7 +1,17 @@
 <div align="center">
-<h1>HivisionlDPhoto-cpp</h1> 
+<h1>HivisionlDPhoto-cpp</h1>
+
+[![release](https://img.shields.io/badge/release-black)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/file)
+[![issue](https://img.shields.io/badge/issue-black)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/issues)
+[![stars](https://img.shields.io/badge/stars-green)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/stargazers)
+[![forks](https://img.shields.io/badge/forks-blue)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/forks)
+
+
 
  </div>
+
+<br>
+
 
 
 # 目录
@@ -14,7 +24,10 @@
 - [如何使用](#使用)
 - [引用项目](#引用项目)
 - [联系我们](#联系我们)
+
 <br>
+
+
 
 
 
@@ -35,14 +48,22 @@
 ​	**5.美颜（waitting）**
 
 ​	**6.安卓apk（waitting）**
+
 <br>
+
+
+
 
 
 # 准备工作
 
 
 windows版和aarch64版程序压缩放在[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)中，解压后需将执行文件和依赖环境放入HivisionIDPhotos_cpp根目录下，权重文件放到model文件夹下。
+
 <br>
+
+
+
 
 
 # 权重文件下载
@@ -56,7 +77,11 @@ hivision_modnet.mnn [下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/re
 symbol_10_320_20L_5scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/symbol_10_320_20L_5scales_v2_deploy.mnn)
 
 symbol_10_320_20L_8scales_v2_deploy.mnn[下载](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/v1.0/symbol_10_320_20L_8scales_v2_deploy.mnn)
+
 <br>
+
+
+
 
 
 # 源码编译
@@ -128,6 +153,9 @@ make -j8
 <br>
 
 
+
+
+
 # 使用
 
 核心指令：
@@ -140,22 +168,30 @@ make -j8
 ​更多指令通过`	./HivisionIDPhotos_cpp.exe --help`查看
 
 ##  1.打开程序
-以windows系统为例，使用工具powershell跳转到根目录下,例：
+以windows系统为例，使用工具powershell跳转到根目录下,例： 
+
 ` cd D:\HivisionIDPhotos-cpp`
 
 
 ## 2.证件照制作
-输入一张照片，输出一张标准证件照png
+输入一张照片，输出一张标准证件照png 
+
 `./HivisionIDPhotos_cpp.exe -i demo/images/test.jpg  -o 1  -r 255  -g 0  -b 0 -h 413 -w 295 `
 
 ## 3.人像抠图
 输入 1 张照片，获得 1张 4 通道透明 png
 
 ## 4.生成一张六寸排版照
-输入一张照片，得到一张六寸排版照 png
+输入一张照片，得到一张六寸排版照 png 
+
 `./HivisionIDPhotos_cpp.exe -i demo/images/test.jpg  -o 1  -r 255  -g 0  -b 0 -h 413 -w 295 -l 1`
 
 <br>
+
+
+
+
+
 
 # 引用项目
 
@@ -196,7 +232,10 @@ make -j8
 }
 
 ```
+
 <br>
+
+
 
 
 #  联系我们
