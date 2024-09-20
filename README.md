@@ -165,7 +165,7 @@ make -j8
 * `-f`：人脸模型选择
 * ...
 
-​更多指令通过`	./HivisionIDPhotos_cpp.exe --help`查看
+​更多指令通过`./HivisionIDPhotos_cpp.exe --help`查看
 
 ##  1.打开程序
 以windows系统为例，使用工具powershell跳转到根目录下,例： 
