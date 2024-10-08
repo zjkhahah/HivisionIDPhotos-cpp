@@ -8,7 +8,10 @@
 
 using namespace MNN;
 
-cv::Mat  Interference(const char*& mnn_path, cv::Mat input_BgrImg, int num_thread);
+cv::Mat  human_matting(const char* & mnn_path, cv::Mat input_BgrImg,int num_thread) ;
+
+#define SIZE_H  512;
+#define SIZE_W  512;
 
 
 #endif

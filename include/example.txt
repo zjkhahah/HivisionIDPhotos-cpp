@@ -1,0 +1,31 @@
+
+
+
+//传入参数Hivision_java_params
+
+//   Hivision_java_params. std::string model_path;//抠图模型路径
+ //  Hivision_java_params.std::string image_path;//图片路径
+ //   std::string out_path;//保存图片路径
+  //  std::string face_model_path;//人脸检测模型路径 人像抠图用不到
+  //  int rgb_r=255;//背景r通道 人像抠图用不到
+   // int rgb_g=0;//背景g通道 人像抠图用不到
+   // int rgb_b=0;//背景b通道 人像抠图用不到
+   // int thread_num=4;//处理线程数 
+   // int model_scale=8;//人脸模型选择 人像抠图用不到
+   // Params param;//输出图像尺寸结构体 
+    //params.out_image_width//输出图像宽度//人像抠图用不到
+     //params.out_image_height//输出图像高度//人像抠图用不到
+/*example*/
+Hivision_java_params hivision;
+hivision.model_path="/********/";
+hivision.image_path="/********/";
+hivision.out_path="/********/";
+human_mating ( hivision);//人像抠图 
+
+
+//传入参数Hivision_java_params
+//out_size_kb 输出图片大小
+//layout_phot 0 关闭图片排版 1 开启排版
+i=ID_photo (Hivision_java_params hivision,int out_size_kb,bool layout_phot);
+i=0; //错误返回
+i=1;//正常

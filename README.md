@@ -58,7 +58,7 @@
 # 准备工作
 
 
-windows版和aarch64版程序压缩放在[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)中，解压后需将执行文件和依赖环境放入HivisionIDPhotos_cpp根目录下，权重文件放到model文件夹下。
+windows版和Linux版程序压缩放在[release](https://github.com/zjkhahah/HivisionIDPhotos_cpp/releases/tag/file)中，解压后需将执行文件和依赖环境放入HivisionIDPhotos_cpp根目录下，权重文件放入model文件夹下。
 
 <br>
 
@@ -100,7 +100,7 @@ cd  HivisionIDPhotos_cpp
 
 ​		**opencv版本为4.7.0**
 
-### 	**1.windows**
+### **1.windows**
 
 - 环境要求
 
@@ -125,11 +125,11 @@ cd  HivisionIDPhotos_cpp
 ```
 cd  HivisionIDPhotos_cpp
 mkdir build && cd build
-cmake .. -G Ninja
+cmake .. -G Ninja  #命令行编译cmake .. -G Ninja    api编译 cmake .. -G Ninja -DCOMPILE_LIBRARY=ON
 ninja
 ```
 
-​	**2.arm64编译**
+### 	**2.arm64编译**
 
 ​	以Linaro工具链为例。首先从[Linaro](https://releases.linaro.org/components/toolchain/binaries/latest-7/)网页中按照宿主机以及交叉编译目标设备来选择合适的工具链。这里我们以`arm-linux-gnueabi`为例，点击网页上的链接，进入[arm-linux-gnueabi](https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabi/)页面。 按照宿主机类型(这里以X64 Linux为例)选择下载链接, 文件名形如 gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi.tar.xz 下载后解压到任意目录
 
@@ -150,13 +150,32 @@ cmake .. \
 -DCMAKE_CXX_COMPILER=交叉编译器中C++编译器的路径
 make -j8
 ```
-<br>
+### <br>	**3.安卓编译**API
+
+1. 编译MNN 安卓版教程为[[主库编译 — MNN-Doc 2.1.1 documentation (mnn-docs.readthedocs.io)](https://mnn-docs.readthedocs.io/en/latest/compile/engine.html)]
+2. 下载opencv安卓版本[链接](https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-android-sdk.zip)
+
+编译好的静态opencv文件和mnn文件放入lib文件夹下
+
+````
+cd  HivisionIDPhotos_cpp
+mkdir build && cd build
+
+cmake ..     -DCMAKE_TOOLCHAIN_FILE=#CMake工具链文件的路径     -DCMAKE_ANDROID_NDK=#Android NDK（Native Development Kit）的安装路径    -DANDROID_PLATFORM=android-21     -DANDROID_NATIVE_API_LEVEL=21     -DANDROID_ABI=arm64-v8a     -DANDROID_NATIVE_API_LEVEL=21 -DCOMPILE_LIBRARY=ON -DCOMPILE_ANDROID=ON
+
+make -j8
+
+
+
+````
 
 
 
 
 
-# 使用
+
+
+# 命令行使用
 
 核心指令：
 * `-i`：输入照片路径
@@ -165,7 +184,7 @@ make -j8
 * `-f`：人脸模型选择
 * ...
 
-​更多指令通过`./HivisionIDPhotos_cpp.exe --help`查看
+更多指令通过`./HivisionIDPhotos_cpp.exe --help`查看
 
 ##  1.打开程序
 以windows系统为例，使用工具powershell跳转到根目录下,例： 
@@ -189,6 +208,12 @@ make -j8
 <br>
 
 
+
+# API使用
+
+```
+Hivision_config 
+```
 
 
 

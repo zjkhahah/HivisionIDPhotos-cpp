@@ -21,7 +21,7 @@ std::pair<int, int> detectDistance(int value, int cropHeight, double max = 0.06,
 
 
 
-cv::Mat IDphotos_cut(int x1, int y1, int x2, int y2, const cv::Mat& img_bgra, Params pa) {
+static cv::Mat IDphotos_cut(int x1, int y1, int x2, int y2, const cv::Mat& img_bgra, int rgb_r,int rgb_g ,int rgb_b) {
 
     cv::Mat img;
     cv::cvtColor(img_bgra, img, cv::COLOR_BGR2BGRA);
@@ -52,23 +52,18 @@ cv::Mat IDphotos_cut(int x1, int y1, int x2, int y2, const cv::Mat& img_bgra, Pa
         x2 = img.cols;
     }
 
-    try {
-        cv::Mat background(cropHeight, cropWidth, CV_8UC4, cv::Scalar(pa.rgb_b, pa.rgb_g, pa.rgb_r, 255));
+        cv::Mat background(cropHeight, cropWidth, CV_8UC4, cv::Scalar(rgb_b, rgb_g, rgb_r, 255));
 
-        if (tempY1 < cropHeight && tempX1 < cropWidth && cropHeight - tempY2 > 0 && cropWidth - tempX2 > 0) {
 
 
 
             img(cv::Range(y1, y2), cv::Range(x1, x2)).copyTo(background(cv::Range(tempY1, cropHeight - tempY2), cv::Range(tempX1, cropWidth - tempX2)));
 
 
-        }
+
         return background;
-    }
-    catch (const cv::Exception& ex) {
-        std::cerr << "OpenCV error: " << ex.what() << std::endl;
-    }
-    return cv::Mat();
+
+
 }
 
 std::vector<int> getBox(const cv::Mat& image, int model = 1, int correctionFactor = 0, int thresh = 127) {
@@ -130,13 +125,11 @@ std::vector<int> getBox(const cv::Mat& image, int model = 1, int correctionFacto
     }
 }
 
-cv::Mat photo_adjust(Params params, cv::Mat adjust_photo) {
+cv::Mat photo_adjust(matting_params params, cv::Mat adjust_photo, int out_image_height,int out_image_width,int rgb_r,int rgb_g,int rgb_b) {
 
     cv::Mat result_image;
 
 
-    int out_image_height = params.out_image_height;
-    int out_image_width = params.out_image_width;
     float x1 = params.face_info.x1;
     float x2 = params.face_info.x2;
     float y1 = params.face_info.y1;
@@ -161,7 +154,7 @@ cv::Mat photo_adjust(Params params, cv::Mat adjust_photo) {
     int crop_y2 = crop_y1 + crop_size_y;
     int crop_x2 = crop_x1 + crop_size_x;
 
-    cv::Mat cut_image = IDphotos_cut(crop_x1, crop_y1, crop_x2, crop_y2, adjust_photo, params);
+    cv::Mat cut_image = IDphotos_cut(crop_x1, crop_y1, crop_x2, crop_y2, adjust_photo, rgb_r,rgb_g,rgb_b);
 
 
     cv::Mat resize_cut_img;
@@ -191,7 +184,7 @@ cv::Mat photo_adjust(Params params, cv::Mat adjust_photo) {
             crop_x2 - xRight,
             crop_y2 - cutValueTop + statusTop * moveValue,
             adjust_photo,
-            params
+            rgb_r,rgb_g,rgb_b
         );
     }
 

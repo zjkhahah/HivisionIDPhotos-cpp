@@ -2,31 +2,7 @@
 
 
 
-static cv::Mat image3bgr(const cv::Mat& input_image) {
-    cv::Mat result_image;
 
-    if (input_image.channels() == 1) { // 灰度图（单通道）
-        // 复制单通道图像到三个通道
-        cv::cvtColor(input_image, result_image, cv::COLOR_GRAY2BGR);
-    }
-    else if (input_image.channels() == 2) { // 可能是单通道图像加上一个alpha通道
-        // 复制两通道图像到三个通道
-        cv::cvtColor(input_image, result_image, cv::COLOR_GRAY2BGR);
-    }
-    else if (input_image.channels() == 4) { // 四通道图像（可能是RGBA）
-        // 从四通道图像中提取前三个通道（BGR）
-        result_image = input_image(cv::Rect(0, 0, input_image.cols, input_image.rows));
-        cv::cvtColor(result_image, result_image, cv::COLOR_RGBA2BGR);
-    }
-    else if (input_image.channels() == 3) { // 已经是BGR
-        result_image = input_image.clone();
-    }
-    else {
-        std::cerr << "Unsupported number of channels" << std::endl;
-    }
-
-    return result_image;
-}
 
 
  static cv::Mat NNormalize(const cv::Mat& array, const std::vector<float>& mean, const std::vector<float>& std, int dtype = CV_32F) {
@@ -35,8 +11,6 @@ static cv::Mat image3bgr(const cv::Mat& input_image) {
     im = im / 255.0;
     cv::subtract(im, cv::Scalar(mean[0], mean[1], mean[2]), im);
     cv::divide(im, cv::Scalar(std[0], std[1], std[2]), im);
-
-
     return im;
 }
 
@@ -76,11 +50,10 @@ static cv::Mat seg_postprocess(cv::Mat img_mat, cv::Mat input_image) {
 
 
 
-cv::Mat  Interference(const char* & mnn_path, cv::Mat input_BgrImg,int num_thread) {
+cv::Mat  human_matting(const char* & mnn_path, cv::Mat input_BgrImg,int num_thread) {
 
  
-    cv::Mat matBgrImg =image3bgr(input_BgrImg);//设定图片通道
-
+    cv::Mat matBgrImg =image3bgr(input_BgrImg);//判断图像通道
     if (matBgrImg.empty()) {
      std::cerr << "Error: Image cannot be loaded." << std::endl;
      return cv::Mat();
@@ -95,55 +68,45 @@ cv::Mat  Interference(const char* & mnn_path, cv::Mat input_BgrImg,int num_threa
     config.numThread = num_thread;
     auto session = net->createSession(config);
     auto input = net->getSessionInput(session, nullptr);
-    int size_w = 512;  // 初始化宽度
-    int size_h = 512;  // 初试化高度
-    int bpp =3;
+    int size_w = SIZE_W;  // 初始化宽度
+    int size_h = SIZE_H;  // 初试化高度
     auto shape = input->shape();
-    if(shape[2]!=-1||shape[3]!=-1){
-        if (shape[0] != 1) {
-            shape[0] = 1;
-            net->resizeTensor(input, shape);
-            net->resizeSession(session);
-        }
-        bpp = shape[1];
-        size_h = shape[2];
-        size_w = shape[3];
-        if (bpp == 0)
-            bpp = 1;
-        if (size_h == 0)
-            size_h = 1;
-        if (size_w == 0)
-            size_w = 1;
+    if (shape[0] != 1) {
+        shape[0] = 1;
     }
-    else{
-        std::vector<int> shape = {1, bpp, size_h, size_w};  // 假设框架使用 NHWC 格式
-        net->resizeTensor(input, shape);
-        net->resizeSession(session);
+    if (shape[2] == -1) {
+       shape[2] = size_h;
     }
-    MNN_PRINT("input: w:%d , h:%d, bpp: %d\n", size_w, size_h, bpp);
-   
-    cv::Mat pre_img = seg_preprocess( matBgrImg,size_w, size_h);
+    if (shape[3] == -1) {
+        shape[3] = size_w;
+    }
+    net->resizeTensor(input, shape);
+    net->resizeSession(session);
+    
+    cv::Mat pre_img = seg_preprocess(matBgrImg,size_w, size_h);
     std::vector<std::vector<cv::Mat>> nChannels;
     std::vector<cv::Mat> rgbChannels(3);
     cv::split(pre_img, rgbChannels);
     nChannels.push_back(rgbChannels); //  NHWC  转NCHW
-    void* pvData = malloc(1 * 3 * size_w * size_w * sizeof(float));
-    if (pvData == nullptr) {
-        printf("error");
-    }
-    int nPlaneSize = size_w * size_w;
-    for (int c = 0; c < 3; ++c)
     {
-        cv::Mat matPlane = nChannels[0][c];
-        memcpy((float*)(pvData)+c * nPlaneSize,
+        void* pvData = malloc(1 * 3 * size_w * size_w * sizeof(float));
+        if (pvData == nullptr) {
+            printf("error");
+        }
+        int nPlaneSize = size_w * size_w;
+        for (int c = 0; c < 3; ++c)
+        {
+            cv::Mat matPlane = nChannels[0][c];
+            memcpy((float*)(pvData)+c * nPlaneSize,
             matPlane.data, nPlaneSize * sizeof(float));
+        }
+        auto nchwTensor = new Tensor(input, Tensor::CAFFE);
+        ::memcpy(nchwTensor->host<float>(), pvData, size_w* size_h * 3 * sizeof(float));
+        input->copyFromHostTensor(nchwTensor);
+        delete nchwTensor;
+        free(pvData);
+        pvData = NULL;
     }
-    auto nchwTensor = new Tensor(input, Tensor::CAFFE);
-    ::memcpy(nchwTensor->host<float>(), pvData, size_w* size_h * 3 * sizeof(float));
-    input->copyFromHostTensor(nchwTensor);
-    delete nchwTensor;
-    free(pvData);
-    pvData = NULL;
     net->runSession(session);
     Tensor* pTensorOutput = net->getSessionOutput(session, NULL);
     auto dimType = pTensorOutput->getDimensionType();
@@ -165,12 +128,5 @@ cv::Mat  Interference(const char* & mnn_path, cv::Mat input_BgrImg,int num_threa
 }
    
 
-//int main() {
-//    const char* mnn_path = "F:\\HivisionIDPhotos\\HivisionIDPhotos\\HivisionIDPhotos\\mnn_hivision_modnet.mnn";
-//    const char* inputPatch = "F:\\HivisionIDPhotos\\HivisionIDPhotos\\HivisionIDPhotos\\test.jpg";
-//    cv::Mat resultImage = Interference(mnn_path, inputPatch);
-//    cv::imwrite("testzjk.png", resultImage);
-//    return 0;
-//}
 
 
