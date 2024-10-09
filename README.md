@@ -1,6 +1,5 @@
 <div align="center">
 <h1>HivisionlDPhoto-cpp</h1>
-
 [![release](https://img.shields.io/badge/release-black)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/file)
 [![issue](https://img.shields.io/badge/issue-black)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/issues)
 [![stars](https://img.shields.io/badge/stars-green)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/stargazers)
@@ -211,13 +210,173 @@ make -j8
 
 # API使用
 
+利用SpringBoot+JNA调用dll文件生成API（lunix环境调用.so文件）
+下面以HivisionIDphotos中的human_mating方法为例
+
+## 1.创建SpringBoot项目并在pom.xml中添加依赖
+
+
 ```
-Hivision_config 
+		<dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.12.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.28</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ezmorph</groupId>
+            <artifactId>ezmorph</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+```
+## 2.放入dll/so文件
+
+将需要调用的dll文件放在src\main\resources\win32-x86-64\中
+
+## 3.构建需要传参的类
+
+这里需要知道方法的具体传参，根据JNA映射规则进行编写，下面三个类根据HivisionIDphotos.dll内函数的传参结构体编写。
+Hivision_java_params.java
+
+```
+public class Hivision_java_params extends Structure {
+    public String model_path;
+    public String image_path;
+    public String out_path;
+    public String face_model_path;
+    public int rgb_r, rgb_g, rgb_b;
+    public int thread_num, model_scale;
+    public Params param = new Params();
+
+    @Override
+    protected List<String> getFieldOrder() {
+        return Arrays.asList("model_path", "image_path", "out_path", "face_model_path",
+                "rgb_r", "rgb_g", "rgb_b", "thread_num", "model_scale", "param");
+    }
+    public Hivision_java_params() {
+        super();
+        // 初始化默认值
+        this.rgb_r = 255;
+        this.rgb_g = 0;
+        this.rgb_b = 0;
+        this.thread_num = 4;
+        this.model_scale = 8;
+    }
+    }
 ```
 
+Params.java
 
+```
+public class Params extends Structure {
+    public int out_image_width, out_image_height;
+    public boolean change_bg_only;
+    public float head_measure_ratio, head_height_ratio;
+    public float[] head_top_range = new float[2];
+    public int rgb_r, rgb_g, rgb_b;
+    public FaceInfo face_info = new FaceInfo();
 
+    @Override
+    protected List<String> getFieldOrder() {
+        return Arrays.asList("out_image_width", "out_image_height", "change_bg_only",
+                "head_measure_ratio", "head_height_ratio", "head_top_range",
+                "rgb_r", "rgb_g", "rgb_b", "face_info");
+    }
 
+    public Params() {
+        super();
+        // 初始化默认值
+        out_image_width = 295;
+        out_image_height = 413;
+        change_bg_only = false;
+        head_measure_ratio = 0.2f;
+        head_height_ratio = 0.55f;
+        head_top_range[0] = 0.12f;
+        head_top_range[1] = 0.1f;
+        rgb_r = 255;
+        rgb_g = 0;
+        rgb_b = 0;
+    }}
+```
+FaceInfo.java
+```
+public class FaceInfo extends Structure {
+    public float x1, y1, x2, y2, score, area;
+    public float[] landmarks = new float[10];
+
+    @Override
+    protected List<String> getFieldOrder() {
+        return Arrays.asList("x1", "y1", "x2", "y2", "score", "area", "landmarks");
+    }
+
+    public FaceInfo() {
+        super();
+        // 初始化数组
+        Arrays.fill(landmarks, 0.0f);
+    }}
+```
+
+## 4.编写对应的Library接口
+
+一个Library接口对应一个dll，内抽象方法与dll中的函数一一对应。Native.loadLibrary()第一个参数为dll文件路径，不加.dll后缀。
+HivisionIDphotosLibrary.java
+```
+public interface HivisionIDphotosLibrary extends Library {
+    HivisionIDphotosLibrary INSTANCE = Native.loadLibrary("src\\main\\resources\\win32-x86-64\\HivisionIDphotos", HivisionIDphotosLibrary.class);
+    void human_mating(Hivision_java_params hivision_java_params);
+    int ID_photo(Hivision_java_params hivision_java_params,int out_size_kb,boolean layout_phot);}
+```
+
+## 5.编写Controller类
+
+JnaDemoController.java
+```
+@RestController
+@RequestMapping("/JNA")
+public class JnaDemoController {
+    @PostMapping("/human_mating")
+    public String human_mating(@RequestParam("hivision_java_params_json") String hivision_java_params_json){
+        try{
+            Hivision_java_params hivision_java_params = JSONObject.parseObject(hivision_java_params_json, Hivision_java_params.class);
+            HivisionIDphotosLibrary.INSTANCE.human_mating(hivision_java_params);
+            return "success";
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return "fail";
+        }
+    }}
+
+```
 # 引用项目
 
 1. [MNN](https://github.com/alibaba/MNN):
