@@ -7,7 +7,7 @@
 
 
 
-cv::Mat photo_adjust(matting_params params, cv::Mat adjust_photo, int out_image_height,int out_image_width,int rgb_r,int rgb_g,int rgb_b);
+cv::Mat photo_adjust(matting_params params, cv::Mat adjust_photo, int out_image_height,int out_image_width,int rgb_r,int rgb_g,int rgb_b, float head_measure_ratio);
 
 
 

@@ -35,15 +35,79 @@ static cv::Mat seg_postprocess(cv::Mat img_mat, cv::Mat input_image) {
     cv::resize(matte, resize_matte, input_image.size(),0,0, cv::INTER_AREA);
     std::vector<cv::Mat> bgr;
     cv::split(input_image, bgr); // bgr[0] 是蓝色通道，bgr[1] 是绿色通道，bgr[2] 是红色通道
-
+    printf("input_image=%d\n", input_image.dims);
     // 合并通道和掩码
     std::vector<cv::Mat> channels = { bgr[0], bgr[1], bgr[2], resize_matte };
   
     cv::merge(channels, resize_matte);
-
+    printf("resize_matte=%d\n", resize_matte.dims);
     return  resize_matte;
 
 
+
+}
+
+
+
+
+static cv::Mat hollow_out_fix(const cv::Mat& src) {
+    cv::Mat src_img = src;
+    if (src.channels() != 4 || src.dims != 2) {
+        std::cerr << "Error: Image mismatch." << std::endl;
+        return cv::Mat();
+     }
+    std::vector<cv::Mat> bgra(4);
+    cv::Mat bgr_img;
+
+    cv::split(src_img, bgra);
+    cv::Mat b_img = bgra[0];
+    cv::Mat g_img = bgra[1];
+    cv::Mat r_img = bgra[2];
+    cv::Mat a_img = bgra[3];
+    std::vector<cv::Mat> bgr_channels;
+    bgr_channels.push_back(b_img);
+    bgr_channels.push_back(g_img);
+    bgr_channels.push_back(r_img);
+
+    cv::merge(bgr_channels, bgr_img);
+    a_img=add_padding(a_img, 10, cv::BORDER_CONSTANT, cv::Scalar(0));
+    cv::Mat a_threshold;
+    cv::threshold(a_img, a_threshold, 127, 255, cv::THRESH_TOZERO);
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+
+    // 进行腐蚀操作
+    cv::Mat eroded_image;
+    cv::erode(a_threshold, eroded_image, kernel, cv::Point(-1, -1), 3);
+    std::vector<std::vector<cv::Point>> contours;
+
+    cv::findContours(eroded_image, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+    if (contours.size() == 0)  return src_img;
+    std::sort(contours.begin(), contours.end(), compareContours);
+    cv::Mat contourImg;
+    contourImg= cv::Mat::zeros(a_img.size(), a_img.type());
+    cv::drawContours(contourImg, contours, 0, cv::Scalar(255), 2);
+
+    cv::Mat mask = cv::Mat::zeros(a_img.size() + cv::Size(2, 2), a_img.type());
+    cv::Scalar newVal(255);
+    cv::Point seedPoint(0, 0);
+    cv::floodFill(contourImg, mask, seedPoint, newVal);
+    cv::Mat maxVal = cv::Mat::ones(contourImg.size(), contourImg.type()) * 255;
+    cv::Mat inverted_contour;
+    cv::subtract(maxVal, contourImg, inverted_contour);
+    cv::Mat updated_a;
+    cv::add(a_img, inverted_contour, updated_a);
+    cv::Mat slicedA = updated_a(cv::Range(10, updated_a.rows - 10), cv::Range(10, updated_a.cols - 10));
+
+    // 合并 BGR 通道和更新后的 Alpha 通道
+    std::vector<cv::Mat> channels;
+    channels.push_back(bgr_img);
+    channels.push_back(slicedA);
+
+    cv::Mat result;
+    cv::merge(channels, result);
+
+
+    return result;
 
 }
 
@@ -121,8 +185,11 @@ cv::Mat  human_matting(const char* & mnn_path, cv::Mat input_BgrImg,int num_thre
     ::memcpy(getData, outputUser->host<float>(), size_w * 1 * size_h * sizeof(float));
     cv::Mat out(size_w, size_w, CV_32F);
     std::memcpy(out.ptr<float>(0), getData, size_w * size_w * sizeof(float));
-    cv::Mat output_img =seg_postprocess(out, matBgrImg);
+    cv::Mat matting_img =seg_postprocess(out, matBgrImg);
+ 
     free(getData);
+    cv::Mat output_img =hollow_out_fix(matting_img);
+    
     return output_img;
   
 }

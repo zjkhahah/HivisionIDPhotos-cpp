@@ -17,7 +17,7 @@ cv::Mat generate_layout_image(
     int width = 295,
     int height = 413
 );
-
-
+cv::Mat add_padding(const cv::Mat& src, int pad_size, int borderType, const cv::Scalar& value);
+bool compareContours(const std::vector<cv::Point>& contour1, const std::vector<cv::Point>& contour2);
 
 #endif // !1

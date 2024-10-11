@@ -125,7 +125,8 @@ std::vector<int> getBox(const cv::Mat& image, int model = 1, int correctionFacto
     }
 }
 
-cv::Mat photo_adjust(matting_params params, cv::Mat adjust_photo, int out_image_height,int out_image_width,int rgb_r,int rgb_g,int rgb_b) {
+
+cv::Mat photo_adjust(matting_params params, cv::Mat adjust_photo, int out_image_height,int out_image_width,int rgb_r,int rgb_g,int rgb_b, float head_measure_ratio) {
 
     cv::Mat result_image;
 
@@ -142,7 +143,7 @@ cv::Mat photo_adjust(matting_params params, cv::Mat adjust_photo, int out_image_
     cv::Point2f face_center(x1 + (face_width / 2), y1 + (face_height / 2));
 
     int  width_height_ratio = out_image_width / out_image_height;
-    float crop_measure = (face_width * face_height) / params.head_measure_ratio;
+    float crop_measure = (face_width * face_height) / head_measure_ratio;
     float resize_ratio = crop_measure / (out_image_height * out_image_width);
     float  resize_ratio_single = sqrt(
         resize_ratio
@@ -150,7 +151,7 @@ cv::Mat photo_adjust(matting_params params, cv::Mat adjust_photo, int out_image_
     int crop_size_x = out_image_width * resize_ratio_single;
     int crop_size_y = out_image_height * resize_ratio_single;
     int crop_x1 = std::lround(face_center.x - crop_size_x / 2);
-    int crop_y1 = std::lround(face_center.y - crop_size_y * 0.45);
+    int crop_y1 = std::lround(face_center.y - crop_size_y * params.head_height_ratio);
     int crop_y2 = crop_y1 + crop_size_y;
     int crop_x2 = crop_x1 + crop_size_x;
 

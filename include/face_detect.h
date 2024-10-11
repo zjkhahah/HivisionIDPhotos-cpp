@@ -21,8 +21,8 @@ typedef struct FaceInfo {
 typedef struct matting_params {
 
 	bool change_bg_only = false;
-	float head_measure_ratio = 0.2;
-	float head_height_ratio = 0.55;
+	/*float head_measure_ratio = 0.35;*/
+	float head_height_ratio = 0.45;
 	float head_top_range[2] = { 0.12f, 0.1f };
 	FaceInfo face_info;
 

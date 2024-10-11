@@ -55,7 +55,7 @@ int ID_photo (Hivision_config hivision,int out_size_kb,bool layout_phot){
 		human_matting_params.face_info = finalBox[0];
 	}
 	free(face_detector);
-    cv::Mat hd_result = photo_adjust(human_matting_params, add_background_img, hivision.out_image_height,hivision.out_image_width,hivision.background_r,hivision.background_g,hivision.background_b);
+    cv::Mat hd_result = photo_adjust(human_matting_params, add_background_img, hivision.out_image_height,hivision.out_image_width,hivision.background_r,hivision.background_g,hivision.background_b, hivision.head_measure_ratio);
     cv::Mat standard_result;
 	cv::Size standard_size(hivision.out_image_width,hivision.out_image_height);
     cv::resize(hd_result, standard_result, standard_size);

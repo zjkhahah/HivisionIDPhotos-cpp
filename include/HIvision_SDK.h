@@ -23,6 +23,7 @@ extern "C" DLL_API typedef struct Hivision_config
     int background_b=0;
     int thread_num=4;
     int model_scale=8;
+    float head_measure_ratio = 0.35;
     int out_image_width = 295;
 	int out_image_height = 413;
     

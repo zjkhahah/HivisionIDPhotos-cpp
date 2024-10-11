@@ -22,10 +22,10 @@
 #include <iostream>
 #include <memory>
 
-#ifdef TERMINAL
+//#ifdef TERMINAL
 	#include "cmdline.h"
 
-#endif
+//#endif
 
 
 

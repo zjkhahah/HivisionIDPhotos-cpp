@@ -1,6 +1,24 @@
 #include "main.h"
 
 
+bool compareContours(const std::vector<cv::Point>& contour1, const std::vector<cv::Point>& contour2) {
+    double area1 = cv::contourArea(contour1);
+    double area2 = cv::contourArea(contour2);
+    return area1 > area2; // 返回 true 如果第一个轮廓的面积大于第二个
+}
+
+
+
+cv::Mat add_padding(const cv::Mat& src, int pad_size, int borderType, const cv::Scalar& value) {
+    CV_Assert(src.type() != CV_8S); // 确保图像类型不是CV_8S，因为copyMakeBorder不支援
+
+    // 添加填充
+    cv::Mat dst;
+    cv::copyMakeBorder(src, dst, pad_size, pad_size, pad_size, pad_size, borderType, value);
+
+    return dst;
+}
+
 cv::Mat image3bgr(const cv::Mat& input_image) {
     cv::Mat result_image;
 
