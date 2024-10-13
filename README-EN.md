@@ -19,7 +19,7 @@ English / [中文](README.md)
 # 目录
 
 
-- [Project Introduction](# Project-Introduction)
+- [Project Introduction](#Project-Introduction)
 - [preparation](#preparation)
 - [Weight file download](#Weight-file-download)
 - [Compile source code](#Compile-source-code)
