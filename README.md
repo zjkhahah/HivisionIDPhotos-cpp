@@ -1,7 +1,12 @@
 <div align="center">
 <h1>HivisionlDPhoto-cpp</h1>
-	
-	
+​	
+
+
+
+
+
+[English](README-EN.md) / 中文
 
 [![release](https://img.shields.io/badge/release-black)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/releases/tag/file)
 [![issue](https://img.shields.io/badge/issue-black)](https://github.com/zjkhahah/HivisionIDPhotos-cpp/issues)

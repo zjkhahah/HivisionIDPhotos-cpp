@@ -35,12 +35,11 @@ static cv::Mat seg_postprocess(cv::Mat img_mat, cv::Mat input_image) {
     cv::resize(matte, resize_matte, input_image.size(),0,0, cv::INTER_AREA);
     std::vector<cv::Mat> bgr;
     cv::split(input_image, bgr); // bgr[0] 是蓝色通道，bgr[1] 是绿色通道，bgr[2] 是红色通道
-    printf("input_image=%d\n", input_image.dims);
+ 
     // 合并通道和掩码
     std::vector<cv::Mat> channels = { bgr[0], bgr[1], bgr[2], resize_matte };
   
     cv::merge(channels, resize_matte);
-    printf("resize_matte=%d\n", resize_matte.dims);
     return  resize_matte;
 
 
@@ -171,14 +170,17 @@ cv::Mat  human_matting(const char* & mnn_path, cv::Mat input_BgrImg,int num_thre
         free(pvData);
         pvData = NULL;
     }
+	
+ 
     net->runSession(session);
+
+
     Tensor* pTensorOutput = net->getSessionOutput(session, NULL);
     auto dimType = pTensorOutput->getDimensionType();
     if (pTensorOutput->getType().code != halide_type_float) {
         dimType = Tensor::CAFFE;
     }
     auto outputUser = new Tensor(pTensorOutput, Tensor::CAFFE);
-    MNN_PRINT("output size:%d\n", outputUser->elementSize());
  // 拷贝出去
     pTensorOutput->copyToHostTensor(outputUser);
     void* getData = malloc(1 * 1 * size_w * size_h * sizeof(float));
