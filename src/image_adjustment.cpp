@@ -69,7 +69,7 @@ static cv::Mat IDphotos_cut(int x1, int y1, int x2, int y2, const cv::Mat& img_b
 std::vector<int> getBox(const cv::Mat& image, int model = 1, int correctionFactor = 0, int thresh = 127) {
     // 输入必须为四通道
     if (image.channels() != 4) {
-        throw std::invalid_argument("输入的图像必须为四通道！");
+        throw std::invalid_argument("Image must be in 4 channels!");
     }
     // correction_factor 规范化
     std::vector<int> correction;
