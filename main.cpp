@@ -17,13 +17,16 @@ int main(int argc, char* argv[]) {
 	p.add<int>("background_color_b", 'b', "background blue", false, 0);
 	p.add<int>("out_images_width", 'w', "out images width", false, 295);
 	p.add<int>("out_images_height", 'h', "out images height", false, 413);
-	p.add<float>("head_measure_ratio", 'e', "head_measure_ratio", false, 0.35, cmdline::range(0, 1));
+	p.add<float>("head_measure_ratio", 'e', "head_measure_ratio range(0-1)", false, 0.35);
 	p.add<int>("face_model", 'f', "face_model type 5 and 8", false, 5);
 	p.add<bool>("layout_photos", 'l', "layout_photo", false, true);
 	std::string face_model_path = "./model";
 	p.parse_check(argc, argv);
-    matting_params human_matting_params;
-
+    	matting_params human_matting_params;
+	if(p.get<float>("head_measure_ratio")>1||p.get<float>("head_measure_ratio")<0){
+		printf("option value is invalid: --head_measure_ratio %f",p.get<float>("head_measure_ratio"));
+		return -1;
+	}
 
 #include <chrono>	
 	std::string modelFilename = p.get<std::string>("segment_model");
