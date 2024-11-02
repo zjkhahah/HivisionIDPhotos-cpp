@@ -433,4 +433,4 @@ public class JnaDemoController {
 
 #  联系我们
 
-如果您有任何问题，请提[issue](https://github.com/zjkhahah/HivisionIDPhotos-cpp/issues)或发邮件至24021211792@stu.xidian.edu.cn
+如果您有任何问题，请提[issue](https://github.com/zjkhahah/HivisionIDPhotos-cpp/issues)或发邮件至junkangzhou@stu.xidian.edu.cn
