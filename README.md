@@ -219,7 +219,7 @@ make -j8
 
 # API使用
 
-利用SpringBoot+JNA调用dll文件生成API（lunix环境调用.so文件）
+利用SpringBoot+JNA调用dll文件生成API（linux环境调用.so文件）
 下面以HivisionIDphotos中的human_mating方法为例
 
 ## 1.创建SpringBoot项目并在pom.xml中添加依赖
